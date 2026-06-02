@@ -8,12 +8,15 @@ RUN mkdir /home/appuser/.ssh
 # permisos
 RUN chown -R appuser:appuser /home/appuser/
 
+RUN mkdir -p /var/www/.ssh
+RUN chown -R appuser:appuser /var/www
+
 # No solicitar descargar el host key al acceder a nuevos servers
 RUN echo "StrictHostKeyChecking no" >> /home/appuser/.ssh/config
 # ampliar ancho de columnnas del bash
 RUN echo "export COLUMNS=300" >> /home/appuser/.bashrc
 # alias de console para ejecutar parametros
-RUN echo "alias sf=/appdata/www/bin/console" >> /home/appuser/.bashrc
+RUN echo "alias sf=/var/www/bin/console" >> /home/appuser/.bashrc
 
 # copiar la configuracion de php
 COPY ./php.ini /usr/local/etc/php/php.ini
@@ -40,8 +43,8 @@ RUN wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
 RUN chmod a+x php-cs-fixer
 RUN mv php-cs-fixer /usr/local/bin/php-cs-fixer
 
-RUN mkdir -p /appdata/www
-
 USER appuser
 
-WORKDIR /appdata/www
+WORKDIR /var/www
+
+CMD bash -c "composer install"
